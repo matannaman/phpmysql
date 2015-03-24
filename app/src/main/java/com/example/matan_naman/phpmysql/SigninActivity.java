@@ -35,7 +35,7 @@ public class SigninActivity  extends AsyncTask<String,Void,String>{
             try {
                 String username = (String) arg0[0];
                 String password = (String) arg0[1];
-                String link = "http://10.0.2.2:8080/ll.php?username="
+                String link = "http://sameat.light-era.net/login.php?username="
                         + username + "&password=" + password;
                 URL url = new URL(link);
                 HttpClient client = new DefaultHttpClient();

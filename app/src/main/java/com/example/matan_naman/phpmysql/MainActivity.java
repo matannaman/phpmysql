@@ -32,7 +32,6 @@ public class MainActivity extends Activity {
         String username = usernameField.getText().toString();
         String password = passwordField.getText().toString();
         new SigninActivity(this,role).execute(username,password);
-        Person     s;
 
     }
 
