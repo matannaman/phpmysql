@@ -20,6 +20,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:22.0.0'
+    compile files('src/main/java/com/example/matan_naman/phpmysql/gson-1.1.jar')
+    compile files('C:/Users/matan_naman/AndroidStudioProjects/phpmysql/lib/gson-2.3.1.jar')
 }
