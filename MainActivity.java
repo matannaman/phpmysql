@@ -10,8 +10,9 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
-    private EditText usernameField,passwordField;
+    private EditText usernameField,passwordField,IdField;
     private TextView status,role,method;
+    String username,password,id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +20,9 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         usernameField = (EditText)findViewById(R.id.usernametxt);
         passwordField = (EditText)findViewById(R.id.passwordtxt);
-        role = (TextView)findViewById(R.id.Statelog);
+        IdField = (EditText)findViewById(R.id.idtxt);
+        role = (TextView)findViewById(R.id.role);
+        
 
     }
     @Override
@@ -28,11 +31,36 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-    public void login(View view){
-        String username = usernameField.getText().toString();
-        String password = passwordField.getText().toString();
-        new SigninActivity(this,role).execute(username,password);
+    public void login(View view)  {
+        username = usernameField.getText().toString();
+        password = passwordField.getText().toString();
+        id = IdField.getText().toString();
+        if(CheckValidation())
+            return;
+
+        new SigninActivity(usernameField,passwordField,IdField,role).execute(username,password,id);
 
     }
+    public boolean CheckTextLength(EditText editText,String str,String message) {
+        if (str.length() == 0) {
+            editText.requestFocus();
+            editText.setError(message + " cannot be empty");
+            return true;
+        }
+        return false;
+    }
+     public boolean CheckValidation(){
+         if (CheckTextLength(usernameField, username, "User name")||
+                 CheckTextLength(passwordField, password, "Password")||
+         CheckTextLength(IdField, id, "ID")
+                 )
+          return true;
+        return false;
 
-}
+
+    }
+    }
+
+
+
+

@@ -1,72 +1,92 @@
 package com.example.matan_naman.phpmysql;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
+import android.widget.EditText;
 import android.widget.TextView;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URL;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
 
 public class SigninActivity  extends AsyncTask<String,Void,String>{
-
+    private EditText usernameField,passwordField,IdField;
     private TextView roleField;
-    private Context context;
     private int byGetOrPost = 0;
     //flag 0 means get and 1 means post.(By default it is get.)
-    public SigninActivity(Context context,
+    public SigninActivity(EditText usernameField,EditText passwordField,EditText IdField,
                           TextView roleField) {
-        this.context = context;
 
         this.roleField = roleField;
+        this.usernameField=usernameField;
+        this.passwordField=passwordField;
+        this.IdField=IdField;
     }
 
     protected void onPreExecute(){
 
     }
-    @Override
-    protected String doInBackground(String... arg0) {
-            try {
-                String username = (String) arg0[0];
-                String password = (String) arg0[1];
-                String link = "http://sameat.light-era.net/login.php?username="
-                        + username + "&password=" + password;
-                URL url = new URL(link);
-                HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet();
-                request.setURI(new URI(link));
-                HttpResponse response = client.execute(request);
-                BufferedReader in = new BufferedReader
-                        (new InputStreamReader(response.getEntity().getContent()));
 
-                StringBuffer sb = new StringBuffer("");
-                String line = "";
-                while ((line = in.readLine()) != null) {
-                    sb.append(line);
-                    break;
-                }
-                in.close();
-                return sb.toString();
-            } catch (Exception e) {
-                return new String("Exception:: " + e.getMessage());
-            }
+    @SuppressLint("NewApi")
+    @Override
+    protected String doInBackground(String... arg0){
+       String username = (String) arg0[0];
+        String password = (String) arg0[1];
+        String id = (String) arg0[2];
+
+
+        //String    username="Aadmin";
+        // String id = "400000000";
+      //  String   password="fthrones5!E";
+        HashMap<String, String> map = new HashMap<String, String>();
+        String charset="UTF-8";
+        String query="";
+        String Json="";
+
+        try {
+            query = String.format("username=%s&id=%s&password=%s&appType=%s",
+                    URLEncoder.encode(username, charset),
+                    URLEncoder.encode(id, charset),
+                    URLEncoder.encode(password, charset),
+                    URLEncoder.encode("2", charset));
+        } catch (UnsupportedEncodingException e) {
+            return "Error";
         }
 
+        ConnectionClass loginobj =new ConnectionClass(query,"Login");
+        Json=loginobj.GetJsonArray();
+        if (Json.length()==2)
+            return "no";
+        try {
+            map=loginobj.jsonToMap(Json);
+        } catch (JSONException e) {
+            return "Error";
 
+        }
+        User user = new User();
+        user.SetValue(map);
+
+        return  "yes";
+    }
 
     @Override
     protected void onPostExecute(String result){
 
         if(result.equals("yes"))
-        this.roleField.setText("User Connected");
+            this.roleField.setText("User Connected");
+        else  if(result.equals("no"))
+
+        {
+            this.roleField.setText("Please Try again");
+            usernameField.setText("");
+            passwordField.setText("");
+           IdField.setText("");
+        }
         else
-            this.roleField.setText("Try again");
+            this.roleField.setText("error occurred");
 
     }
 }
+
